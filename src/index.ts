@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
     if (newMessage) {
       status.ok = true;
       io.in(data.conversationId).emit('receivedMessage', newMessage);
+      io.emit('updateNewMessage', newMessage);
     }
     
     callback(status);
