@@ -1,21 +1,28 @@
 import { pool } from "../config";
 
 export class Model {
-  private query: string = '';
-  protected table: string;
-  protected db = pool;
+  protected static db = pool;
 
-  constructor(tableName: string) {
-    this.table = tableName;
+  protected static timestamps() {
+    const names: string[] = ['created_at', 'updated_at'];
+    const values: string[] = ['NOW()', 'NOW()'];
+    return {
+      names: names,
+      values: values
+    };
   }
 
-  select() {
-    this.query = 'SELECT * FROM ' + this.table;
-    return this;
-  }
+  protected static convertToPlaceholder(values: any[]) {
+    let result = '';
 
-  get() {
-    this.query += ";";
-    return this.db.query(this.query);
+    for (let index = 0; index < values.length; index++) {
+      if (index === values.length - 1) {
+        result += `$${index + 1}`;
+      } else {
+        result += `$${index + 1}, `;
+      }
+    }
+
+    return result;
   }
 }

@@ -1,27 +1,36 @@
 import { Model } from "./Model";
 
-class Message extends Model {
-  constructor() {
-    const table = 'messages';
-    super(table);
-  }
-
-  async create(userId: number, conversationId: number, content: string) {
-    try {
-      const insertQuery = `INSERT INTO ${this.table} (user_id, conversation_id, content, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *;`;
-      const insertValues = [userId, conversationId, content];
-      const insertResult = await this.db.query(insertQuery, insertValues);
-  
-      if (insertResult.rowCount == 1) {
-        const updateQuery = 'UPDATE conversations SET updated_at = $1 WHERE id = $2';
-        await this.db.query(updateQuery, [insertResult.rows[0].created_at, conversationId]);
-      }
-
-      return insertResult.rows[0];
-    } catch (err) {
-      throw err;
-    }
-  }
+export interface IMessage {
+  id: number;
+  user_id: number;
+  conversation_id: number;
+  content: string;
+  created_at: Date;
+  updated_at: Date | null;
 }
 
-export default new Message();
+type TMessage = {
+  user_id: number;
+  conversation_id: number;
+  content: string;
+}
+
+export class Message extends Model {
+  private static table: string = 'messages';
+
+  public static async create(properties: TMessage): Promise<IMessage | null> {
+    const columns: string = [...Object.keys(properties), ...this.timestamps().names].join(', ');
+    const values = [...Object.values(properties), ...this.timestamps().values];
+    const placeholders: string = this.convertToPlaceholder(values);
+    const query = `INSERT INTO ${this.table} (${columns}) VALUES (${placeholders}) RETURNING *;`;
+    const result = await this.db.query(query, values);
+    return result.rows[0] || null;
+  }
+
+  public static async find(id: number): Promise<IMessage | null> {
+    const query = `SELECT * FROM ${this.table} WHERE id = $1;`;
+    const values = [id];
+    const result = await this.db.query(query, values);
+    return result.rows[0] || null;
+  }
+}
