@@ -33,7 +33,7 @@ export class ConversationController {
         }
       }
 
-      return conversation; // CONTINUE HERE!!! TASK: Fixed the queries.
+      return conversation;
     } catch (err) {
       throw err;
     }

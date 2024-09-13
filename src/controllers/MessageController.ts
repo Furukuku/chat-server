@@ -1,3 +1,4 @@
+import { Conversation } from "../models/Conversation";
 import { IMessage, Message } from "../models/Message";
 
 export class MessageController {
@@ -15,6 +16,7 @@ export class MessageController {
         conversation_id: conversationId,
         content: content
       });
+      await Conversation.update(conversationId);
       
       return message;
     } catch (err) {

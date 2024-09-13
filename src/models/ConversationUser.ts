@@ -17,7 +17,7 @@ type TConversationUser = {
 }
 
 export class ConversationUser extends Model {
-  private static table: string = 'conversation_user';
+  private static readonly table: string = 'conversation_user';
 
   /**
    * Creates a new conversation_user.

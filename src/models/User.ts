@@ -17,7 +17,7 @@ export interface IUser {
 }
 
 export class User extends Model {
-  private static table: string = 'users';
+  private static readonly table: string = 'users';
 
   /**
    * Gets the user.

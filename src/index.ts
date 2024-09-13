@@ -54,14 +54,6 @@ io.on("connection", (socket) => {
 
     callback(response);
   });
-
-  socket.on('sample', () => {
-    console.log('disconnected');
-  })
-
-  socket.on('disconnect', () => {
-    // console.log('disconnected');
-  });
 });
 
 httpServer.listen(port);
